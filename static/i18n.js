@@ -4,7 +4,7 @@ let translations = {};
 
 async function loadTranslations(lang) {
   try {
-    const res = await fetch(`/locales/${lang}.json`);
+    const res = await fetch(`/static/locales/${lang}.json`);
     if (!res.ok) throw new Error('Failed to load');
     translations = await res.json();
     applyTranslations();
