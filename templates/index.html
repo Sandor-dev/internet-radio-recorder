@@ -11,8 +11,21 @@
 <link rel="manifest" href="/static/site.webmanifest">
 <link rel="stylesheet" href="/static/styles.css">
 <style>
-.lang-select { float: right; margin-top: -40px; }
-.lang-select select { background: #11161d; color: #eee; border: 1px solid #4b5563; border-radius: 6px; padding: 6px 10px; }
+.lang-select {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+}
+.lang-select select {
+  background: #11161d;
+  color: #eee;
+  border: 1px solid #4b5563;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+body { position: relative; }
 </style>
 </head>
 <body>
