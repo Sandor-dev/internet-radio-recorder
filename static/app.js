@@ -1,3 +1,4 @@
+// i18n station cards - fixed esc() 2026-11-14
 const days=[["mon","days.mon"],["tue","days.tue"],["wed","days.wed"],["thu","days.thu"],["fri","days.fri"],["sat","days.sat"],["sun","days.sun"]];
 let D={stations:[],status:{}};
 
