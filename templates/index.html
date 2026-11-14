@@ -1,85 +1,99 @@
 <!doctype html>
-<html lang="pl">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#111827">
 <meta name="application-name" content="IRR">
 <meta name="apple-mobile-web-app-title" content="IRR">
-<title>Internet Radio Recorder v2.2.4</title>
+<title>Internet Radio Recorder</title>
 <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
 <link rel="manifest" href="/static/site.webmanifest">
 <link rel="stylesheet" href="/static/styles.css">
+<style>
+.lang-select { float: right; margin-top: -40px; }
+.lang-select select { background: #11161d; color: #eee; border: 1px solid #4b5563; border-radius: 6px; padding: 6px 10px; }
+</style>
 </head>
 <body>
-<h1><img src="/static/favicon.svg" alt="" width="36" height="36" style="vertical-align:middle;margin-right:10px;border-radius:8px">Internet Radio Recorder v2.2.4</h1>
-<div class="subtitle">Nagrywanie • harmonogram • retencja • biblioteka • statystyki</div>
+<div class="lang-select">
+  <select id="langSelect" onchange="setLanguage(this.value)">
+    <option value="en">English</option>
+    <option value="hu">Magyar</option>
+    <option value="la">Latina</option>
+    <option value="po">Polski</option>
+  </select>
+</div>
+
+<h1><img src="/static/favicon.svg" alt="" width="36" height="36" style="vertical-align:middle;margin-right:10px;border-radius:8px"><span data-i18n="title">Internet Radio Recorder</span></h1>
+<div class="subtitle" data-i18n="subtitle">Recording • schedule • retention • library • statistics</div>
 
 <div class="topstats">
-  <div class="stat"><span class="muted">Stacje</span><b id="stStations">—</b></div>
-  <div class="stat"><span class="muted">Nagrywa teraz</span><b id="stRecording">—</b></div>
-  <div class="stat"><span class="muted">Pliki</span><b id="stFiles">—</b></div>
-  <div class="stat"><span class="muted">Zajęte miejsce</span><b id="stSize">—</b></div>
-  <div class="stat"><span class="muted">Wolne na wolumenie</span><b id="stFree">—</b></div>
+  <div class="stat"><span class="muted" data-i18n="stats.stations">Stations</span><b id="stStations">—</b></div>
+  <div class="stat"><span class="muted" data-i18n="stats.recording_now">Recording now</span><b id="stRecording">—</b></div>
+  <div class="stat"><span class="muted" data-i18n="stats.files">Files</span><b id="stFiles">—</b></div>
+  <div class="stat"><span class="muted" data-i18n="stats.used_space">Used space</span><b id="stSize">—</b></div>
+  <div class="stat"><span class="muted" data-i18n="stats.free_on_volume">Free on volume</span><b id="stFree">—</b></div>
   <div class="diskbar">
-    <div class="storage-head"><span>Zajętość wolumenu</span><span id="diskText">—</span></div>
+    <div class="storage-head"><span data-i18n="stats.volume_usage">Volume usage</span><span id="diskText">—</span></div>
     <div class="storage-bar"><div class="storage-fill" id="diskFill" style="width:0%"></div></div>
   </div>
 </div>
 
 <div class="tabs">
-  <button onclick="tab('today')">Dzisiaj</button>
-  <button onclick="tab('stations')">Stacje</button>
-  <button onclick="tab('calendar')">Kalendarz</button>
-  <button onclick="tab('history')">Historia</button>
-  <button onclick="tab('health')">Strumienie</button>
-  <button onclick="tab('library')">Biblioteka</button>
-  <button onclick="tab('stats')">Statystyki</button>
-  <button onclick="location=calendarUrl()">Kalendarz ICS</button>
-  <button onclick="backup()">Backup</button>
-  <button onclick="document.getElementById('mergeFile').click()">Import / scal</button>
+  <button onclick="tab('today')" data-i18n="tab.today">Today</button>
+  <button onclick="tab('stations')" data-i18n="tab.stations">Stations</button>
+  <button onclick="tab('calendar')" data-i18n="tab.calendar">Calendar</button>
+  <button onclick="tab('history')" data-i18n="tab.history">History</button>
+  <button onclick="tab('health')" data-i18n="tab.streams">Streams</button>
+  <button onclick="tab('library')" data-i18n="tab.library">Library</button>
+  <button onclick="tab('stats')" data-i18n="tab.stats">Statistics</button>
+  <button onclick="location=calendarUrl()" data-i18n="tab.ics">Calendar ICS</button>
+  <button onclick="backup()" data-i18n="tab.backup">Backup</button>
+  <button onclick="document.getElementById('mergeFile').click()" data-i18n="tab.import_merge">Import / Merge</button>
   <input id="mergeFile" type="file" accept=".json,application/json" style="display:none" onchange="importBackup(this,'merge')">
-  <button onclick="document.getElementById('replaceFile').click()">Przywróć backup</button>
+  <button onclick="document.getElementById('replaceFile').click()" data-i18n="tab.restore">Restore backup</button>
   <input id="replaceFile" type="file" accept=".json,application/json" style="display:none" onchange="importBackup(this,'replace')">
 </div>
 
 <div id="today" class="hide">
   <div class="today-grid">
-    <div class="today-card"><span class="muted">Teraz</span><div id="todayNow"></div></div>
-    <div class="today-card"><span class="muted">Następnie</span><div id="todayNext"></div></div>
-    <div class="today-card"><span class="muted">Dzisiaj</span><div id="todayCount"></div></div>
+    <div class="today-card"><span class="muted" data-i18n="today.now">Now</span><div id="todayNow"></div></div>
+    <div class="today-card"><span class="muted" data-i18n="today.next">Next</span><div id="todayNext"></div></div>
+    <div class="today-card"><span class="muted" data-i18n="today.today">Today</span><div id="todayCount"></div></div>
   </div>
-  <div class="card"><h2>Dzisiejsza rozpiska</h2><div id="todayTimeline" class="timeline"></div></div>
+  <div class="card"><h2 data-i18n="today.schedule">Today's schedule</h2><div id="todayTimeline" class="timeline"></div></div>
 </div>
 <div id="history" class="hide">
-  <div class="card"><h2>Historia wykonania zadań</h2><div id="execHistory"></div></div>
+  <div class="card"><h2 data-i18n="history.title">Task execution history</h2><div id="execHistory"></div></div>
 </div>
 <div id="stations">
   <div class="station-tools">
-    <button onclick="add()">+ DODAJ STACJĘ</button>
-    <button class="primary" onclick="saveAll()">ZAPISZ ZMIANY</button>
-    <span class="muted">Kolejność: przeciągnij ☰ albo użyj ↑ / ↓, następnie zapisz.</span>
+    <button onclick="add()" data-i18n="stations.add">+ ADD STATION</button>
+    <button class="primary" onclick="saveAll()" data-i18n="stations.save_changes">SAVE CHANGES</button>
+    <span class="muted" data-i18n="stations.order_hint">Order: drag ☰ or use ↑ / ↓, then save.</span>
     <span id="saveStatus" class="save-status muted"></span>
   </div>
   <div id="cards"></div>
 </div>
 <div id="calendar" class="hide">
   <div class="card">
-    <h2>Kalendarz tygodniowy</h2>
+    <h2 data-i18n="calendar.weekly">Weekly calendar</h2>
     <div class="calendar-wrap"><div id="weekCalendar" class="weekcal"></div></div>
   </div>
   <div class="card">
-    <h2>Najbliższe zadania</h2>
+    <h2 data-i18n="calendar.upcoming">Upcoming tasks</h2>
     <div id="upcomingList" class="upcoming"></div>
   </div>
 </div>
 <div id="health" class="hide">
-  <div class="card"><h2>Stan strumieni</h2><div id="healthList"></div></div>
+  <div class="card"><h2 data-i18n="streams.title">Stream status</h2><div id="healthList"></div></div>
 </div>
 <div id="library" class="hide"></div>
 <div id="stats" class="hide"></div>
 
 <script>window.CALENDAR_TOKEN={{ calendar_token|tojson }};</script>
+<script src="/static/i18n.js"></script>
 <script src="/static/app.js"></script>
 </body>
 </html>
