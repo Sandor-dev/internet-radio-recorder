@@ -1,9 +1,8 @@
-// i18n station cards - fixed esc() 2026-11-14
 const days=[["mon","days.mon"],["tue","days.tue"],["wed","days.wed"],["thu","days.thu"],["fri","days.fri"],["sat","days.sat"],["sun","days.sun"]];
 let D={stations:[],status:{}};
 
 function esc(x){
-  return String(x??"").replace(/[&<>"]/g,c=>({"&":"&","<":"<",">":">",'"':"""}[c]));
+  return String(x??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 }
 function fmtBytes(n){
   n=+n||0;
@@ -608,6 +607,23 @@ async function loadHistory(){
   }
 }
 
+async function fullLoad(){
+  const r=await fetch("/api/data",{cache:"no-store"});
+  const j=await r.json();
+  D.stations = Array.isArray(j.stations) ? j.stations : (j.stations ? Object.values(j.stations) : []);
+  D.status = j.status || {};
+  render();
+  renderToday();
+  renderCalendar();
+  await overview();
+}
+async function statusLoad(){
+  const r=await fetch("/api/data",{cache:"no-store"});
+  const j=await r.json();
+  D.status=j.status||{};
+  overview();
+}
+
 function tickClocks(){
   document.querySelectorAll(".duration").forEach(el=>{
     el.textContent=durationFrom(el.dataset.start);
@@ -615,20 +631,6 @@ function tickClocks(){
   document.querySelectorAll(".countdown").forEach(el=>{
     el.textContent=until(el.dataset.when);
   });
-}
-
-async function statusLoad(){
-  const r=await fetch("/api/status",{cache:"no-store"});
-  D.status=await r.json();
-  overview();
-}
-async function fullLoad(){
-  const r=await fetch("/api/stations",{cache:"no-store"});
-  D.stations=await r.json();
-  await statusLoad();
-  render();
-  renderToday();
-  renderCalendar();
 }
 
 window.addEventListener("load",()=>{
