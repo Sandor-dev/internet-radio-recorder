@@ -36,6 +36,9 @@ The web interface supports multiple languages via JSON locale files in `static/l
 Switch languages from the dropdown in the top-right corner. The choice is saved in `localStorage`.
 
 To add a new language, copy `static/locales/en.json` and translate the values.
+<p align="center">
+  <img src="docs/image.png" width="900" alt="My new image">
+</p>
 
 ---
 
